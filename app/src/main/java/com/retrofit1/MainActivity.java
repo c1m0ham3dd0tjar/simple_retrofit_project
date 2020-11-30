@@ -1,6 +1,8 @@
 package com.retrofit1;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -9,6 +11,9 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -16,20 +21,17 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
-    static String baseUrl = "";
-    TextView id, name, videosrv, videook;
-    ImageView picture;
+    static String baseUrl = "https://cimoandroid.com/";
+    RecyclerView recycler;
+    List<Movie> movieList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        id = findViewById(R.id.id);
-        videook = findViewById(R.id.videook);
-        videosrv = findViewById(R.id.videosrv);
-        name = findViewById(R.id.name);
-        picture = findViewById(R.id.picture);
 
+        recycler = findViewById(R.id.recycler);
+        movieList = new ArrayList<>();
         //Retrofit Builder
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -39,27 +41,29 @@ public class MainActivity extends AppCompatActivity {
         //instance for interface
         MyAPICall myAPICall = retrofit.create(MyAPICall.class);
 
-        Call<Movie> call = myAPICall.getMovieCall();
+        Call<List<Movie>> call = myAPICall.getMovies();
 
-        call.enqueue(new Callback<Movie>() {
+        call.enqueue(new Callback<List<Movie>>() {
             @Override
-            public void onResponse(Call<Movie> call, Response<Movie> response) {
+            public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
                 //checking for response
                 if (response.code() != 200) {
-                    name.setText("verify the network");
+                    //  name.setText("verify the network");
                     return;
                 } else {
-                    id.setText(response.body().getId());
-                    name.setText(response.body().getName());
-                    videook.setText(response.body().getVideoOk());
-                    videosrv.setText(response.body().getVideoSrv());
-                    Picasso.get().load(response.body().getPicture()).into(picture);
+                    List<Movie> movies = response.body();
+                    for (Movie movie : movies) {
+                        movieList.add(movie);
+                    }
+                    Adapter adapter = new Adapter(getApplicationContext(), movieList);
+                    recycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    recycler.setAdapter(adapter);
                 }
 
             }
 
             @Override
-            public void onFailure(Call<Movie> call, Throwable t) {
+            public void onFailure(Call<List<Movie>> call, Throwable t) {
 
             }
         });
