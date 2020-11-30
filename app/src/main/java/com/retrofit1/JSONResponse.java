@@ -13,7 +13,4 @@ public class JSONResponse {
         return moviesArray;
     }
 
-    public void setMoviesArray(Movie[] moviesArray) {
-        this.moviesArray = moviesArray;
-    }
 }

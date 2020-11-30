@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,10 +35,17 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder>  {
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
     holder.id.setText(moviesList.get(position).getId());
+    holder.release.setText(moviesList.get(position).getDetails().getRelease());
+    holder.duration.setText(moviesList.get(position).getDetails().getDuration());
+    holder.cats.setText(moviesList.get(position).getDetails().getCategory());
     holder.name.setText(moviesList.get(position).getName());
     holder.videosrv.setText(moviesList.get(position).getVideoSrv());
     holder.videook.setText(moviesList.get(position).getVideoOk());
         Picasso.get().load(moviesList.get(position).getPicture()).into(holder.picture);
+
+ holder.rating.setRating(moviesList.get(position).getRating()/2);
+
+
     }
 
     @Override
@@ -46,11 +54,15 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder>  {
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
-        TextView id, name, videosrv, videook;
+        TextView id, name, videosrv, videook,duration,release,cats;
         ImageView picture;
-
+        RatingBar rating;
         public MyViewHolder(View view) {
             super(view);
+            cats = view.findViewById(R.id.cats);
+            rating = view.findViewById(R.id.rating);
+            duration = view.findViewById(R.id.duration);
+            release = view.findViewById(R.id.release);
             id = view.findViewById(R.id.id);
             videook = view.findViewById(R.id.videook);
             videosrv = view.findViewById(R.id.videosrv);
