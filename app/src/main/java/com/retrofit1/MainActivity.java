@@ -11,7 +11,10 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -41,31 +44,47 @@ public class MainActivity extends AppCompatActivity {
         //instance for interface
         MyAPICall myAPICall = retrofit.create(MyAPICall.class);
 
-        Call<List<Movie>> call = myAPICall.getMovies();
-
-        call.enqueue(new Callback<List<Movie>>() {
+        Call<JSONResponse> call = myAPICall.getMovies();
+        call.enqueue(new Callback<JSONResponse>() {
             @Override
-            public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
-                //checking for response
-                if (response.code() != 200) {
-                    //  name.setText("verify the network");
-                    return;
-                } else {
-                    List<Movie> movies = response.body();
-                    for (Movie movie : movies) {
-                        movieList.add(movie);
-                    }
-                    Adapter adapter = new Adapter(getApplicationContext(), movieList);
-                    recycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    recycler.setAdapter(adapter);
-                }
-
+            public void onResponse(Call<JSONResponse> call, Response<JSONResponse> response) {
+                JSONResponse jsonResponse = response.body();
+                movieList = new ArrayList<>(Arrays.asList(jsonResponse.getMoviesArray()));
+                Adapter adapter = new Adapter(getApplicationContext(), movieList);
+                recycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                recycler.setAdapter(adapter);
             }
 
             @Override
-            public void onFailure(Call<List<Movie>> call, Throwable t) {
+            public void onFailure(Call<JSONResponse> call, Throwable t) {
 
             }
         });
+//        Call<List<Movie>> call = myAPICall.getMovies();
+
+//        call.enqueue(new Callback<List<Movie>>() {
+//            @Override
+//            public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
+//                //checking for response
+//                if (response.code() != 200) {
+//                    //  name.setText("verify the network");
+//                    return;
+//                } else {
+//                    List<Movie> movies = response.body();
+//                    for (Movie movie : movies) {
+//                        movieList.add(movie);
+//                    }
+//                    Adapter adapter = new Adapter(getApplicationContext(), movieList);
+//                    recycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//                    recycler.setAdapter(adapter);
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Movie>> call, Throwable t) {
+//
+//            }
+//        });
     }
 }

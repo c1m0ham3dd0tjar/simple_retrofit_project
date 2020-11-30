@@ -8,5 +8,6 @@ import retrofit2.http.GET;
 public interface MyAPICall {
 
     @GET("movie")
-    Call<List<Movie>> getMovies();
+    Call<JSONResponse> getMovies();
+//    Call<List<Movie>> getMovies();
 }
